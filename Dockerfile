@@ -15,6 +15,16 @@ RUN apt-get update && apt-get install -y \
         libglib2.0-dev \
         python3.6-dev
 
+# install .NET Core 2.1
+RUN mkdir /root/Downloads && cd /root/Downloads \
+    && wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb \
+    && dpkg -i packages-microsoft-prod.deb \
+    && add-apt-repository universe \
+    && apt-get install apt-transport-https \
+    && apt-get update \
+    && apt-get install -y dotnet-sdk-2.2 \
+    && rm packages-microsoft-prod.deb
+
 # install Mono and nuget (needed for pythonnet)
 RUN apt install gnupg ca-certificates \
     && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
@@ -33,7 +43,7 @@ RUN mkdir -p /root/dotNet/packages && cd /root/dotNet/packages \
     && find /root/dotNet/packages/ -type f -name '*.dll' -exec cp -n {} /root/dotNet/libs ';'
 
 # install pythonnet and jupyter notebook
-RUN mkdir /root/Downloads && cd /root/Downloads \
+RUN cd /root/Downloads \
     && pip3 install pycparser \
     && pip3 install -U setuptools \
     && pip3 install -U wheel \
@@ -43,6 +53,13 @@ RUN mkdir /root/Downloads && cd /root/Downloads \
     && cd pythonnet-master \
     && pip3 install . \
     && pip3 install jupyter    
+
+# compile infer.net wrappers
+COPY ./wrapper /root/dotNet/packages/wrapper
+
+RUN cd /root/dotNet/packages/wrapper \
+    && dotnet build --configuration Release \
+    && cp ./bin/Release/netstandard2.0/InferWrapper.dll /root/dotNet/libs
 
 WORKDIR /root/dev
 
