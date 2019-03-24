@@ -10,6 +10,26 @@ This repository contains a jupyter notebook that demonstrates how the [Infer.NET
 * Run the image by typing `sudo docker run -it -p 8888:8888 -v ${PWD}:/root/dev infer_pythonnet`
 * The container will start a Jupyter notebook server. Go to <http://localhost:8888> and login with the token that is printed out in the terminal
 
-## Caveat
+## Limitations
 
-As explained in the notebook, the solution is not fully functional. Pythonnet currently still lacks support to handle generic methods with overloads. Hopefully this will be resolved soon. 
+Python.net cannot handle overloads of generic methods properly (see [issue](https://github.com/pythonnet/pythonnet/issues/821)). Calling `Variable.Observed(Array[Double]([...]))` returns `Variable[Double[]]` instead of `VariableArray[Double]`. To enforce a correct return type, we could do `Variable.Observed[Double](Array[Double]([...])))`, but python.net throws an exception. 
+
+Possible soultions:
+
+* Do the reflections manually, but this doesn't seem to work because `Variable` is an *abstract* class in Infer.Net and `Observed` is a static method. So the following does not work:
+
+```python
+lib = clr.AddReference("Microsoft.ML.Probabilistic")
+var_type = lib.GetType("Microsoft.ML.Probabilistic.Models.Variable")
+method = var_type.GetMethod("Observed")
+...
+```
+
+`GetType` returns a None-type, since `Variable` is abstract.  
+ 
+* Write C# library that wraps the function in a non-generic function. This seems to work, but in the end it is not needed (yet) because usage of `Variable.Observed` can be avoided in the simple examples.
+
+## Next
+
+Try more complicated examples with visualizations of the network and inference results in python.
+
