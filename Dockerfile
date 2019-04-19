@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y \
         unzip \
         clang \
         libglib2.0-dev \
-        python3.6-dev
+        python3.6-dev \
+        graphviz
 
 # install Mono and nuget (needed for pythonnet)
 RUN apt install gnupg ca-certificates \
@@ -42,7 +43,9 @@ RUN mkdir /root/Downloads && cd /root/Downloads \
     && rm master.zip \
     && cd pythonnet-master \
     && pip3 install . \
-    && pip3 install jupyter    
+    && pip3 install jupyter
+
+RUN pip3 install NetworkX==2.2 bokeh==1.0.4       
 
 WORKDIR /root/dev
 
