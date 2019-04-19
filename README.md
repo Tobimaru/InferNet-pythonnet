@@ -29,6 +29,10 @@ method = var_type.GetMethod("Observed")
  
 * Write C# library that wraps the function in a non-generic function. This seems to work, but in the end it is not needed (yet) because usage of `Variable.Observed` can be avoided in the simple examples.
 
+## Notes on the usage of Infer.Net inside Jupyter Notebook
+
+* Make sure to create `Variable` objects and assign to them in the **same** cell. Infer.Net doesn't allow to assign to a same Variable multiple times.
+
 ## Next
 
 Try more complicated examples with visualizations of the network and inference results in python.
