@@ -45,7 +45,7 @@ RUN mkdir /root/Downloads && cd /root/Downloads \
     && pip3 install . \
     && pip3 install jupyter
 
-RUN pip3 install bokeh==1.0.4 matplotlib numpy scipy       
+RUN pip3 install bokeh==1.0.4 matplotlib numpy scipy pymc3
 
 WORKDIR /root/dev
 
